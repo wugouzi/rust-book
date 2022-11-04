@@ -1,14 +1,37 @@
-use std::io;
+use std::{io};
+use rand::Rng;
+use std::cmp::Ordering;
 
 fn main() {
-    // In Rust, variables are immutable by default, meaning once we give the variable a value, the value won't change.
-    println!("test");
-    let mut guess = String::new();
+    println!("Guess the number!");
 
-    // & indicates that this argument is a *reference*
-    io::stdin()
-        .read_line(&mut guess)
-        .expect("failed to read line");
+    let secret_number = rand::thread_rng().gen_range(1..=100);
 
-    println!("Fuck you");
+    println!("The secret number is: {secret_number}");
+
+    loop {
+        println!("Please input your guess.");
+
+        let mut guess = String::new();
+
+        io::stdin()
+            .read_line(&mut guess)
+            .expect("Failed to read line");
+
+        println!("You guessed: {guess}");
+
+        let guess: u32 = match guess.trim().parse() {
+            Ok(num) => num,
+            Err(_) => continue,
+        };
+
+        match guess.cmp(&secret_number) {
+            Ordering::Less => println!("small"),
+            Ordering::Equal => {
+                println!("win");
+                break;
+            },
+            Ordering::Greater => println!("big"),
+        }
+    }
 }
